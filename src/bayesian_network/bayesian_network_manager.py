@@ -14,17 +14,17 @@ class BayesianNetworkManager(metaclass=Singleton):
     MAP_KEY = 'map'
     ALPHA_KEY = 'alpha'
     BETA_KEY = 'beta'
-    BETA_DOMAIN = [12.5, 87.5]
+    ALPHA_DOMAIN = []
+    BETA_DOMAIN = []
 
-    def __init__(self, prior: str = None):
-        """
-        :param prior: translation dict, available options are: 'mle','map'.
-        """
+    def __init__(self, alpha_domain, beta_domain):
         self.dal = BayesianNetworkDal()
 
-        self.prior = prior
+        self.prior = None
         self.alpha = None
         self.beta = None
+        self.ALPHA_DOMAIN = alpha_domain
+        self.BETA_DOMAIN = beta_domain
 
         # population variables ...
         self.evidence_qty = None
@@ -155,7 +155,7 @@ class BayesianNetworkManager(metaclass=Singleton):
                 generic_prediction = self.compute_posterior(labels, features, likelihood_tables)
                 generic_accuracy = self.accuracy(generic_prediction, labels)
                 accuracy_list.append(generic_accuracy)
-                for alpha in self.BETA_DOMAIN:
+                for alpha in self.ALPHA_DOMAIN:
                     for beta in self.BETA_DOMAIN:
                         manager.set_prior(BayesianNetworkManager.MAP_KEY, alpha=alpha, beta=beta)
                         beta_prediction = self.compute_posterior(labels, features, likelihood_tables)
@@ -170,7 +170,6 @@ class BayesianNetworkManager(metaclass=Singleton):
         test_result = numpy.array(test_result)
         print(self.meta_predictor(train_result))
         print(self.meta_predictor(test_result))
-        self.plot_results(train_result)
         self.plot_results(test_result)
         return test_result
 
@@ -179,7 +178,7 @@ class BayesianNetworkManager(metaclass=Singleton):
         color_array = ['#%06x' % randint(0, 0xFFFFFF) for i in range(len(array_transpose))]
         color_detail = list()
         color_detail.append('generic')
-        beta_details = ['alpha:%s beta:%s' % x for x in itertools.product(self.BETA_DOMAIN, self.BETA_DOMAIN)]
+        beta_details = ['alpha:%s beta:%s' % x for x in itertools.product(self.ALPHA_DOMAIN, self.BETA_DOMAIN)]
         color_detail.extend(beta_details)
         for result, color in zip(array_transpose, color_array):
             plt.plot(numpy.arange(1, 21), result, color)
@@ -198,6 +197,6 @@ class BayesianNetworkManager(metaclass=Singleton):
 
 
 if __name__ == '__main__':
-    manager = BayesianNetworkManager()
+    manager = BayesianNetworkManager([1, 2], [1, 2])
 
     manager.run_with_cross_validation()
