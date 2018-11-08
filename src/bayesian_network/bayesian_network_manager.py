@@ -151,13 +151,13 @@ class BayesianNetworkManager(metaclass=Singleton):
             run_result_list = [train_result, test_result]
             for labels, features, result in zip(run_label_list, run_feature_list, run_result_list):
                 accuracy_list = list()
-                manager.set_prior(BayesianNetworkManager.MLE_KEY)
+                self.set_prior(BayesianNetworkManager.MLE_KEY)
                 generic_prediction = self.compute_posterior(labels, features, likelihood_tables)
                 generic_accuracy = self.accuracy(generic_prediction, labels)
                 accuracy_list.append(generic_accuracy)
                 for alpha in self.ALPHA_DOMAIN:
                     for beta in self.BETA_DOMAIN:
-                        manager.set_prior(BayesianNetworkManager.MAP_KEY, alpha=alpha, beta=beta)
+                        self.set_prior(BayesianNetworkManager.MAP_KEY, alpha=alpha, beta=beta)
                         beta_prediction = self.compute_posterior(labels, features, likelihood_tables)
                         beta_accuracy = self.accuracy(beta_prediction, labels)
                         accuracy_list.append(beta_accuracy)
