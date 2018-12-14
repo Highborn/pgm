@@ -95,33 +95,6 @@ class TanStructureEstimationManager(metaclass=Singleton):
             mst_edges.append(edge)
         return mst_edges
 
-    def learn(self, *args, **kwargs):
-        label_array, feature_matrix = self.dal.get_processed_data()
-        self._populate_variables(label_array, feature_matrix)
-        # creating full pear to pear mutual information (G_f)
-        self.compute_mutual_information(feature_matrix, label_array)
-        mst_edges = self.find_mst()
-        dag_edges = self.create_dag(mst_edges)
-        self.visualize_tan(dag_edges)
-        print('hello')
-
-    def visualize_tan(self, mst_edges):
-        feature_qty = self.feature_qty
-        tan_edges = ['C' + str(x) for x in range(feature_qty)]
-        tan_edges.extend([str(x[0]) + str(x[1]) for x in mst_edges])
-        time_stamp = datetime.timestamp(datetime.now())
-        file_name = RuntimeConfig.BASE_PROJECT_DIR + 'static/graph_' + str(time_stamp)
-
-        dot = Digraph()
-        dot.node('C', 'C')
-        for i in range(feature_qty):
-            dot.node(str(i), str(i))
-
-        dot.edges(tan_edges)
-
-        print(dot.source)
-        dot.render(file_name, view=True)
-
     def create_dag(self, mst_edges):
         feature_quantity = self.feature_qty
         root = randint(0, feature_quantity - 1)
@@ -143,6 +116,32 @@ class TanStructureEstimationManager(metaclass=Singleton):
                     node_domain.remove(new_root)
                     edges_domain = self.find_child(new_root, edges_domain, node_domain, dag_edges)
         return edges_domain
+
+    def visualize_tan(self, mst_edges):
+        feature_qty = self.feature_qty
+        tan_edges = ['C' + str(x) for x in range(feature_qty)]
+        tan_edges.extend([str(x[0]) + str(x[1]) for x in mst_edges])
+        time_stamp = datetime.timestamp(datetime.now())
+        file_name = RuntimeConfig.BASE_PROJECT_DIR + 'static/graph_' + str(time_stamp)
+
+        dot = Digraph()
+        dot.node('C', 'C')
+        for i in range(feature_qty):
+            dot.node(str(i), str(i))
+        dot.edges(tan_edges)
+
+        print(dot.source)
+        dot.render(file_name, view=True)
+
+    def learn(self, *args, **kwargs):
+        label_array, feature_matrix = self.dal.get_processed_data()
+        self._populate_variables(label_array, feature_matrix)
+        # creating full pear to pear mutual information (G_f)
+        self.compute_mutual_information(feature_matrix, label_array)
+        mst_edges = self.find_mst()
+        dag_edges = self.create_dag(mst_edges)
+        self.visualize_tan(dag_edges)
+        print('hello')
 
 
 if __name__ == '__main__':
