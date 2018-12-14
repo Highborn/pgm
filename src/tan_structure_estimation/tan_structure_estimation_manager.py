@@ -135,7 +135,7 @@ class TanStructureEstimationManager(metaclass=Singleton):
         label_array, feature_matrix = self.dal.get_processed_data()
         self._populate_variables(label_array, feature_matrix)
         # creating full pear to pear mutual information (G_f)
-        self.compute_mutual_information(feature_matrix, label_array)
+        self.compute_mutual_information(feature_matrix)
         mst_edges = self.find_mst()
         dag_edges = self.create_dag(mst_edges)
         self.visualize_tan(dag_edges)
