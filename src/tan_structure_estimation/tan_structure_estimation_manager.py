@@ -141,7 +141,6 @@ class TanStructureEstimationManager(metaclass=Singleton):
         mst_edges = self.find_mst()
         dag_edges = self.create_dag(mst_edges)
         self.visualize_tan(dag_edges)
-        print('hello')
 
 
 if __name__ == '__main__':
