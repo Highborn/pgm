@@ -8,6 +8,7 @@ from functools import wraps
 
 from bayesian_network.bayesian_network_manager import BayesianNetworkManager
 from config.runtime_config import RuntimeConfig
+from tan_structure_estimation.tan_structure_estimation_manager import TanStructureEstimationManager
 
 __author__ = 'e.sadeqi'
 
@@ -54,6 +55,12 @@ def bayesian_network(*args):
     manager_class.run_with_cross_validation()
 
 
+@process_wrapper
+def tan(*args):
+    manager_class = TanStructureEstimationManager()
+    manager_class.learn(*args)
+
+
 def bn(*args):
     return bayesian_network(*args)
 
@@ -63,6 +70,7 @@ if __name__ == '__main__':
     available_function_list = [
         bn,
         bayesian_network,
+        tan,
     ]
     function_names = ""
     for function_ in available_function_list:

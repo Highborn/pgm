@@ -40,7 +40,7 @@ class TanStructureEstimationManager(metaclass=Singleton):
             idx_matrix[key] = np.argwhere(label_array == v)
         return idx_matrix
 
-    def compute_mutual_information(self, feature_matrix, label_array):
+    def compute_mutual_information(self, feature_matrix):
         for i in range(feature_matrix.shape[1]):
             for j in range(i):
                 key = (i, j)
@@ -70,7 +70,6 @@ class TanStructureEstimationManager(metaclass=Singleton):
                     if RuntimeConfig.DEBUG_MODE:
                         print(log_expression)
                     mutual_info += p_xi_xj_c * np.log(log_expression)
-        print('mi:', mutual_info)
         return mutual_info
 
     def find_mst(self):
@@ -114,8 +113,7 @@ class TanStructureEstimationManager(metaclass=Singleton):
                 if new_root in node_domain and tuple(reversed(edge)) not in dag_edges:
                     dag_edges.append(edge)
                     node_domain.remove(new_root)
-                    edges_domain = self.find_child(new_root, edges_domain, node_domain, dag_edges)
-        return edges_domain
+                    self.find_child(new_root, edges_domain, node_domain, dag_edges)
 
     def visualize_tan(self, mst_edges):
         feature_qty = self.feature_qty
